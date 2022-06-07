@@ -1,0 +1,50 @@
+name: Main workflow
+
+on:
+  - pull_request
+  - push
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Helm version
+        id: helm-version
+        run: |
+          helm version --client
+
+      - name: Set variable
+        run: echo '::set-output name=JUST_VARIABLE::myvar'
+        id: justvar
+
+      - name: Helm upgrade
+        id: helm-upgrade
+        uses: ./upgrade
+        with:
+          namespace: echoheaders
+          release: "tombotest"
+          chart: "tom"
+          version: "0.0.1"
+          wait: false
+          dryrun: true
+          atomic: false
+          kubeconfig: /root/.kube/config
+          files: |
+            foobar.yaml
+            buz.yaml
+          set: |
+            service.selector.app | projectName
+            service.selector.appVersion | deploymentName 
+            service.selector[0].release | deploymentName 
+            buildLabels.jenkinsBuildJobName | ${{ steps.justvar.outputs.JUST_VARIABLE }}
+            buildLabels.jenkinsBuildID | ${{ matrix.os }}

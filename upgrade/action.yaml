@@ -1,0 +1,56 @@
+name: Helm upgrade
+description: Helm upgrade
+author: Tomas Hulata <hulata@sysart.tech>
+runs:
+  using: node12
+  main: main.js
+inputs:
+  namespace:
+    description: K8s namespace to use
+    required: true
+  release:
+    description: Helm relsese name
+    required: true
+  kubeconfig:
+    description: Path to kubeconfig
+    required: false
+  dir: 
+    description: Working directory
+    required: false
+    default: "."
+  chart:
+    description: Helm chart
+    required: true
+  version:
+    description: Helm chart version
+    required: true
+  files:
+    description: Helm values files
+    required: false
+  set:
+    description: Helm values set
+    required: false
+  timeout:
+    description: Helm deploy timeout
+    default: "600"
+    required: false
+  atomic:
+    description: Helm deploy atomic
+    type: boolean
+    default: true
+    required: false
+  wait:
+    description: Helm deploy wait
+    type: boolean
+    default: true
+    required: false
+  install:
+    description: Helm deploy install
+    type: boolean
+    default: true
+    required: false
+  dryrun:
+    description: Helm deploy with dry run
+    type: boolean
+    default: false
+    required: false
