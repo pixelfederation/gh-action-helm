@@ -1,0 +1,28 @@
+name: Helm cleanup
+description: Helm cleanup releses
+author: Tomas Hulata <thulata@pixelfederation.com>
+runs:
+  using: node12
+  main: main.js
+inputs:
+  namespace:
+    description: K8s namespace to use
+    required: true
+  regexp:
+    description: Regexp to match deploys to be deleted
+    required: true
+  excludes:
+    description: Exclude deploys from delete
+    required: false
+  kubeconfig:
+    description: Path to kubeconfig
+    required: false
+  dir:
+    description: Working directory
+    required: false
+    default: "."
+  dryrun:
+    description: Helm deploy with dry run
+    type: boolean
+    default: false
+    required: false

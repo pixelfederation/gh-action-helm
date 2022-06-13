@@ -1491,7 +1491,7 @@ var require_core = __commonJS((exports2) => {
     return inputs;
   }
   exports2.getMultilineInput = getMultilineInput2;
-  function getBooleanInput2(name, options) {
+  function getBooleanInput3(name, options) {
     const trueValue = ["true", "True", "TRUE"];
     const falseValue = ["false", "False", "FALSE"];
     const val = getInput3(name, options);
@@ -1502,7 +1502,7 @@ var require_core = __commonJS((exports2) => {
     throw new TypeError(`Input does not meet YAML 1.2 "Core Schema" specification: ${name}
 Support boolean input list: \`true | True | TRUE | false | False | FALSE\``);
   }
-  exports2.getBooleanInput = getBooleanInput2;
+  exports2.getBooleanInput = getBooleanInput3;
   function setOutput(name, value) {
     process.stdout.write(os.EOL);
     command_1.issueCommand("set-output", {name}, value);
@@ -2563,11 +2563,10 @@ var core = __toModule(require_core());
 var DEFAULT_KUBECONFIG_PATH = "~/.kube/config";
 async function getCommonInputs() {
   const result = {};
-  result.kubeconfig = core.getInput("dir", {required: false});
   result.kubeconfig = core.getInput("kubeconfig", {required: false}) || DEFAULT_KUBECONFIG_PATH;
   result.namespace = core.getInput("namespace", {required: true});
-  result.release = core.getInput("release", {required: true});
-  result.dir = core.getInput("dir", {required: true});
+  result.dir = core.getInput("dir", {required: false});
+  result.dryrun = core.getBooleanInput("dryrun", {required: false});
   return result;
 }
 
@@ -2576,15 +2575,16 @@ var exec = __toModule(require_exec());
 function getExecOpts(opt) {
   const options = opt;
   const out = {data: ""};
+  const err = {data: ""};
   options.listeners = {
     stdout: (data) => {
       out.data += data.toString();
     },
     stderr: (data) => {
-      out.data += data.toString();
+      err.data += data.toString();
     }
   };
-  return {out, options};
+  return {out, err, options};
 }
 async function getHelmVersion() {
   let version;
@@ -2607,6 +2607,7 @@ var exec3 = __toModule(require_exec());
 async function helmUpgrade() {
   const ci = await getCommonInputs();
   let helmVersion = await getHelmVersion();
+  const release = core2.getInput("release", {required: true});
   const chart = core2.getInput("chart", {required: true});
   const version = core2.getInput("version", {required: true});
   const files = core2.getMultilineInput("files", {required: false});
@@ -2615,7 +2616,6 @@ async function helmUpgrade() {
   const atomic = core2.getBooleanInput("atomic", {required: false});
   const wait = core2.getBooleanInput("wait", {required: false});
   const install = core2.getBooleanInput("install", {required: false});
-  const dryrun = core2.getBooleanInput("dryrun", {required: false});
   const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig}});
   const setString = set.map((item) => {
     return item.split("|").map((it) => {
@@ -2628,11 +2628,11 @@ async function helmUpgrade() {
   if (helmVersion > 2) {
     timeout = timeout + "s";
   }
-  const helmArgs = ["upgrade", ci.release, chart, "--version", version].concat(filesList).concat(["--set", setString, "--namespace", ci.namespace, "--timeout", timeout]).concat([
+  const helmArgs = ["upgrade", release, chart, "--version", version].concat(filesList).concat(["--set", setString, "--namespace", ci.namespace, "--timeout", timeout]).concat([
     atomic ? "--atomic" : "",
     install ? "--install" : "",
     wait ? "--wait" : "",
-    dryrun ? "--dry-run" : ""
+    ci.dryrun ? "--dry-run" : ""
   ]).filter(Boolean);
   await exec3.exec("helm", helmArgs, opts.options);
 }

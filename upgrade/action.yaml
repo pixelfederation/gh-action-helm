@@ -1,6 +1,6 @@
 name: Helm upgrade
 description: Helm upgrade
-author: Tomas Hulata <hulata@sysart.tech>
+author: Tomas Hulata <thulata@pixelfederation.com>
 runs:
   using: node12
   main: main.js

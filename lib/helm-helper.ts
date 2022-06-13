@@ -6,15 +6,16 @@ export function getExecOpts(opt: object): object {
 
   const options = opt;
   const out = { data: ""};
+  const err = { data: ""};
   options.listeners = {
     stdout: (data: Buffer) => {
       out.data += data.toString();
     },
     stderr: (data: Buffer) => {
-      out.data += data.toString();
+      err.data += data.toString();
     },
   };
-  return {out: out, options: options}
+  return {out: out, err: err, options: options}
 }
 
 export async function getHelmVersion(): Promise<number> {

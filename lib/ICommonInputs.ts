@@ -15,4 +15,8 @@ export interface ICommonInputs {
      * Working directory
      */
     dir: string;
+    /**
+     * Dry run opt
+     */
+    dryrun: boolean;
 }

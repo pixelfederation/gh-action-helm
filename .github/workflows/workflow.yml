@@ -48,3 +48,36 @@ jobs:
             service.selector[0].release | deploymentName 
             buildLabels.jenkinsBuildJobName | ${{ steps.justvar.outputs.JUST_VARIABLE }}
             buildLabels.jenkinsBuildID | ${{ matrix.os }}
+
+  clean:
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Helm version
+        id: helm-version
+        run: |
+          helm version --client
+
+      - name: Set variable
+        run: echo '::set-output name=JUST_VARIABLE::myvar'
+        id: justvar
+
+      - name: Helm clenup
+        id: helm-cleanup
+        uses: ./cleanup
+        with:
+          kubeconfig: /root/.kube/config
+          namespace: echoheaders
+          regexp: "^(tombo|kombo).*"
+          excludes: |
+            .*bla.*
+            .*foo.*
