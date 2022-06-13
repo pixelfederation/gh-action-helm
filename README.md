@@ -30,7 +30,7 @@ Helm upgrade
 ```yml
 - name: Helm upgrade
   id: helm-upgrade
-  uses: ./upgrade
+  uses: pixelfederation/gh-action-helm/upgrade
   with:
     namespace: echoheaders
     release: "tombotest"
@@ -51,3 +51,32 @@ Helm upgrade
       buildLabels.jenkinsBuildID | ${{ matrix.os }}
 ```
 
+
+## Description
+
+Helm cleanup releses
+
+## Inputs
+
+| parameter | description | required | default | type |
+| - | - | - | - | - |
+| namespace | K8s namespace to use | `true` |  | string |
+| regexp | Regexp to match deploys to be deleted | `true` |  | string |
+| excludes | Exclude deploys from delete | `false` |  | list |
+| kubeconfig | Path to kubeconfig | `false` |  | string |
+| dir | Working directory | `false` | . | string |
+| dryrun | Helm deploy with dry run | `false` | false | bool |
+
+## Example
+```yml
+      - name: Helm clenup
+        id: helm-cleanup
+        uses: pixelfederation/gh-action-helm/cleanup
+        with:
+          namespace: echoheaders
+          regexp: "^(tombo|kombo).*" #regexp matching deployment to delete
+          excludes: |
+            .*-${{ appVersion }} # usually we want to preserve new deploy
+            .*login.* # preserve login
+            .*-ingress # preserve live ingress
+```

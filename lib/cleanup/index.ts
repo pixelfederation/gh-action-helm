@@ -25,11 +25,10 @@ export async function helmCleanup(): Promise<void> {
   const promises = [];
   for(let deploy of deploys) {
     helmArgs = [ helmVersion > 2 ? 'uninstall' : 'delete', deploy]
-    .concat([helmVersion == 2 ? "--purge": ""])
+    .concat([helmVersion == 2 ? '--purge': '', ci.dryrun ? '--dry-run' : '']);
     if(helmVersion > 2) {
-        helmArgs = helmArgs.concat(['--namespace', ci.namespace])
+        helmArgs = helmArgs.concat(['--namespace', ci.namespace]);
     }
-    console.log(helmArgs.filter(Boolean));
     promises.push(exec.exec("helm", helmArgs.filter(Boolean), opts.options));
   }
     await Promise.all(promises)
