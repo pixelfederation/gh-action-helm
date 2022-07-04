@@ -14,6 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: dirs
+        run: |
+          ls -l
+
       - name: generete tools version
         working-directory: tests
         run: |
