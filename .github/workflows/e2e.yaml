@@ -51,9 +51,9 @@ jobs:
         with:
           dir: tests
           namespace: test
-          release: "nginx-deploy"
-          chart: "nginx-stable/nginx-ingress"
-          version: "0.13.2"
+          release: nginx-deploy
+          chart: nginx-stable/nginx-ingress
+          version: 0.13.2
           wait: true
           dryrun: false
           atomic: true
