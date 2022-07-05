@@ -67,7 +67,7 @@ jobs:
         with:
           dir: tests
           namespace: default
-          release: foo-release
+          release: nginx-foo-release
           chart: bitnami/wordpress
           version: 15.0.5
           wait: false
@@ -77,7 +77,7 @@ jobs:
 
       - name: Print kubectl deploy
         run: |
-          sleep 30
+          sleep 10
           kubectl -n default get deploy
           kubectl -n default get pods
 
@@ -101,4 +101,6 @@ jobs:
       - name: Print helm deploy after cleanup
         working-directory: tests
         run:
-          helm -n default listm
+          helm -n default list
+          kubectl -n default get deploy
+          kubectl -n default get pods
