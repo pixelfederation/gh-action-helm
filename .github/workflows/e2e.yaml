@@ -32,7 +32,7 @@ jobs:
           which helm
           helm version
           helm repo add nginx-stable https://helm.nginx.com/stable
-          helm search repo nginx-stable/nginx-ingress
+          helm repo add bitnami https://charts.bitnami.com/bitnami
 
       - uses: helm/kind-action@v1.3.0
 
@@ -68,8 +68,8 @@ jobs:
           dir: tests
           namespace: default
           release: foo-release
-          chart: nginx-stable/nginx-ingress
-          version: 0.13.2
+          chart: bitnami/wordpress
+          version: 15.0.5
           wait: false
           dryrun: false
           atomic: false
@@ -97,3 +97,8 @@ jobs:
           excludes: |
             .*bla.*
             .*foo.*
+
+      - name: Print helm deploy after cleanup
+        working-directory: tests
+        run:
+          helm -n default listm
