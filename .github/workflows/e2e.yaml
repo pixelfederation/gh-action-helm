@@ -45,7 +45,7 @@ jobs:
         working-directory: tests
         run: |
           helm repo add nginx-stable https://helm.nginx.com/stable
-          helm repo update nginx-stable
+          helm search repo nginx-stable/nginx-ingress
 
       - name: Helm upgrade
         id: helm-upgrade
