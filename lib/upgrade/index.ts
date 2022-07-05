@@ -33,7 +33,8 @@ export async function helmUpgrade(): Promise<void> {
   }
   const helmArgs: string[] = ['upgrade', release, chart, '--version', version]
     .concat(filesList)
-    .concat(['--set', setString, '--namespace', ci.namespace, '--timeout', timeout])
+    .concat(['--set', setString.length() > 0 ? setString : ''])
+    .concat(['--namespace', ci.namespace, '--timeout', timeout])
     .concat([
       atomic ? '--atomic' : '',
       install ? '--install' : '',
