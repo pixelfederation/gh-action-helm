@@ -2563,7 +2563,7 @@ async function helmUpgrade() {
   const atomic = core2.getBooleanInput("atomic", {required: false});
   const wait = core2.getBooleanInput("wait", {required: false});
   const install = core2.getBooleanInput("install", {required: false});
-  const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig}});
+  const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig, HOME: process.env.HOME}});
   const setString = set.map((item) => {
     return item.split("|").map((it) => {
       return it.trim();
@@ -2575,7 +2575,11 @@ async function helmUpgrade() {
   if (helmVersion > 2) {
     timeout = timeout + "s";
   }
-  const helmArgs = ["upgrade", release, chart, "--version", version].concat(filesList).concat(["--set", setString.length > 0 ? setString : ""]).concat(["--namespace", ci.namespace, "--timeout", timeout]).concat([
+  let helmArgs = ["upgrade", release, chart, "--version", version].concat(filesList);
+  if (setString.length > 0) {
+    helmArgs = helmArgs.concat(["--set", setString]);
+  }
+  helmArgs = helmArgs.concat(["--namespace", ci.namespace, "--timeout", timeout]).concat([
     atomic ? "--atomic" : "",
     install ? "--install" : "",
     wait ? "--wait" : "",

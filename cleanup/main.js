@@ -2556,7 +2556,7 @@ async function helmCleanup() {
   let helmVersion = await getHelmVersion();
   const regexp = core2.getInput("regexp", {required: true});
   const excludes = core2.getMultilineInput("excludes", {required: false});
-  const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig}});
+  const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig, HOME: process.env.HOME}});
   let helmArgs = [
     "list",
     helmVersion > 2 ? "--filter" : "",

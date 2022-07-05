@@ -10,7 +10,7 @@ export async function helmCleanup(): Promise<void> {
   let helmVersion: number = await getHelmVersion();
   const regexp = core.getInput('regexp', { required: true });
   const excludes: string[] = core.getMultilineInput('excludes', { required: false });
-  const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig}});
+  const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig, 'HOME': process.env.HOME}});
   let helmArgs: string[] = ['list', (helmVersion > 2) ? '--filter' : '', regexp,
     '--short', '--namespace', ci.namespace]
     .filter(Boolean);

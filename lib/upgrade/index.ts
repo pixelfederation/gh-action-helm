@@ -10,7 +10,7 @@ export async function helmUpgrade(): Promise<void> {
 
   let helmVersion: number = await getHelmVersion();
 
-  const release = core.getInput('release', { required: true });
+  const release:string = core.getInput('release', { required: true });
   const chart:string = core.getInput('chart', { required: true });
   const version:string = core.getInput('version', { required: true });
   const files: string[] = core.getMultilineInput('files', { required: false });
@@ -19,7 +19,7 @@ export async function helmUpgrade(): Promise<void> {
   const atomic: boolean = core.getBooleanInput('atomic', { required: false });
   const wait: boolean = core.getBooleanInput('wait', { required: false });
   const install: boolean = core.getBooleanInput('install', { required: false });
-  const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig}});
+  const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig, 'HOME': process.env.HOME}});
 
   const setString: string = set.map(item=> { return item.split('|')
     .map(it=> { return it.trim() })
@@ -31,10 +31,12 @@ export async function helmUpgrade(): Promise<void> {
   if (helmVersion > 2) {
     timeout = timeout + 's'
   }
-  const helmArgs: string[] = ['upgrade', release, chart, '--version', version]
+  let helmArgs: string[] = ['upgrade', release, chart, '--version', version]
     .concat(filesList)
-    .concat(['--set', setString.length > 0 ? setString : ''])
-    .concat(['--namespace', ci.namespace, '--timeout', timeout])
+    if ( setString.length > 0 ) {
+      helmArgs = helmArgs.concat(['--set', setString])
+    }
+    helmArgs = helmArgs.concat(['--namespace', ci.namespace, '--timeout', timeout])
     .concat([
       atomic ? '--atomic' : '',
       install ? '--install' : '',

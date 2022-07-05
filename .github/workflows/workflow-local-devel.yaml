@@ -17,10 +17,21 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Helm version
-        id: helm-version
+      - name: generate tools version
         run: |
-          helm version --client
+          echo 'helm 3.7.2' > .tool-versions
+          echo '' > example.yaml
+
+      - name: setup helm
+        uses: pixelfederation/gh-action-asdf/install@v2.0.0
+
+      - name: check helm
+        run: |
+          which helm
+          helm version
+          helm repo add nginx-stable https://helm.nginx.com/stable
+          helm search repo nginx-stable/nginx-ingress
+          touch foobar.yaml buz.yaml
 
       - name: Set variable
         run: echo '::set-output name=JUST_VARIABLE::myvar'
@@ -30,23 +41,20 @@ jobs:
         id: helm-upgrade
         uses: ./upgrade
         with:
-          namespace: echoheaders
-          release: "tombotest"
-          chart: "tom"
-          version: "0.0.1"
+          namespace: test
+          release: nginx-deploy
+          chart: nginx-stable/nginx-ingress
+          version: 0.13.2
           wait: false
           dryrun: true
           atomic: false
           kubeconfig: /root/.kube/config
+          set: |
+            controller.image.tag | tombo
+            controller.ingressClass | ${{ steps.justvar.outputs.JUST_VARIABLE }}
           files: |
             foobar.yaml
             buz.yaml
-          set: |
-            service.selector.app | projectName
-            service.selector.appVersion | deploymentName 
-            service.selector[0].release | deploymentName 
-            buildLabels.jenkinsBuildJobName | ${{ steps.justvar.outputs.JUST_VARIABLE }}
-            buildLabels.jenkinsBuildID | ${{ matrix.os }}
 
   clean:
     strategy:
