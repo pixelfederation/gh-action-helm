@@ -63,10 +63,11 @@ jobs:
 
       - name: Print kubectl deploy
         run: |
-          kubectl -n test get deploy
-          kubectl -n test get pods
+          sleep 30
+          kubectl -n default get deploy
+          kubectl -n default get pods
 
       - name: Print helm deploy
         working-directory: tests
         run:
-          helm -n test list
+          helm -n default list
