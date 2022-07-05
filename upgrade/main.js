@@ -2575,7 +2575,7 @@ async function helmUpgrade() {
   if (helmVersion > 2) {
     timeout = timeout + "s";
   }
-  const helmArgs = ["upgrade", release, chart, "--version", version].concat(["--namespace", ci.namespace, "--timeout", timeout]).concat([
+  const helmArgs = ["upgrade", release, chart, "--version", version].concat(filesList).concat(["--set", setString.length > 0 ? setString : ""]).concat(["--namespace", ci.namespace, "--timeout", timeout]).concat([
     atomic ? "--atomic" : "",
     install ? "--install" : "",
     wait ? "--wait" : "",
