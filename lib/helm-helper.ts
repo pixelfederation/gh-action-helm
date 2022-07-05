@@ -1,5 +1,7 @@
 
 import * as exec from "@actions/exec";
+import { getCommonInputs } from "./input-helper";
+import { ICommonInputs } from "./ICommonInputs";
 
 
 export function getExecOpts(opt: object): object {
@@ -19,10 +21,10 @@ export function getExecOpts(opt: object): object {
 }
 
 export async function getHelmVersion(): Promise<number> {
-  
+    const ci: ICommonInputs = await getCommonInputs();
     let version: number;
 
-    const opts = getExecOpts({});
+    const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig}});
     try {
         await exec.exec("helm", ["version", "--client"], opts.options);
         version = Number(opts.out.data.match(/v([0-9])[.]/)[1]);

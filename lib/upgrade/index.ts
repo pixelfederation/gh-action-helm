@@ -1,12 +1,12 @@
 import { getCommonInputs } from "../input-helper";
 import { getHelmVersion, getExecOpts } from "../helm-helper";
-import {ICommonInputs} from "../ICommonInputs";
+import { ICommonInputs } from "../ICommonInputs";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
 
 export async function helmUpgrade(): Promise<void> {
 
-  const ci = await getCommonInputs();
+  const ci: ICommonInputs = await getCommonInputs();
 
   let helmVersion: number = await getHelmVersion();
 
