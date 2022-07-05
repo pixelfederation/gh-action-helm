@@ -2501,22 +2501,22 @@ var require_exec = __commonJS((exports2) => {
   exports2.exec = exec5;
 });
 
-// lib/upgrade/main.ts
+// src/upgrade/main.ts
 var core3 = __toModule(require_core());
 
-// lib/input-helper.ts
+// src/input-helper.ts
 var core = __toModule(require_core());
 var DEFAULT_KUBECONFIG_PATH = "~/.kube/config";
 async function getCommonInputs() {
   const result = {};
   result.kubeconfig = core.getInput("kubeconfig", {required: false}) || DEFAULT_KUBECONFIG_PATH;
   result.namespace = core.getInput("namespace", {required: true});
-  result.dir = core.getInput("dir", {required: false});
+  result.dir = core.getInput("directory", {required: false});
   result.dryrun = core.getBooleanInput("dryrun", {required: false});
   return result;
 }
 
-// lib/helm-helper.ts
+// src/helm-helper.ts
 var exec = __toModule(require_exec());
 function getExecOpts(opt) {
   const options = opt;
@@ -2548,7 +2548,7 @@ async function getHelmVersion() {
   return version;
 }
 
-// lib/upgrade/index.ts
+// src/upgrade/index.ts
 var core2 = __toModule(require_core());
 var exec3 = __toModule(require_exec());
 async function helmUpgrade() {
@@ -2588,7 +2588,7 @@ async function helmUpgrade() {
   await exec3.exec("helm", helmArgs, opts.options);
 }
 
-// lib/upgrade/main.ts
+// src/upgrade/main.ts
 (async () => {
   try {
     await helmUpgrade();

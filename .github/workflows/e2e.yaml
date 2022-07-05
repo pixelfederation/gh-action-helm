@@ -47,7 +47,7 @@ jobs:
         id: helm-upgrade-nginx
         uses: pixelfederation/gh-action-helm/upgrade@main
         with:
-          dir: tests
+          directory: tests
           namespace: default
           release: nginx-deploy
           chart: nginx-stable/nginx-ingress
@@ -65,7 +65,7 @@ jobs:
         id: helm-upgrade-foo
         uses: pixelfederation/gh-action-helm/upgrade@main
         with:
-          dir: tests
+          directory: tests
           namespace: default
           release: nginx-foo-release
           chart: bitnami/wordpress
@@ -90,7 +90,7 @@ jobs:
         id: helm-cleanup
         uses: pixelfederation/gh-action-helm/cleanup@main
         with:
-          dir: tests
+          directory: tests
           kubeconfig: .kubeconfig
           namespace: default
           regexp: "^(nginx).*"

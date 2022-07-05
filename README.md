@@ -14,7 +14,7 @@ Helm upgrade
 | namespace | K8s namespace to use | `true` |  | string |
 | release | Helm relsese name | `true` |  | string |
 | kubeconfig | Path to kubeconfig | `false` |  | string |
-| dir | Working directory | `false` | . | string |
+| directory | Working directory | `false` | . | string |
 | chart | Helm chart | `true` |  | string |
 | version | Helm chart version | `true` |  | string |
 | files | Helm values files | `false` |  | list |

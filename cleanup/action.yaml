@@ -17,7 +17,7 @@ inputs:
   kubeconfig:
     description: Path to kubeconfig
     required: false
-  dir:
+  directory:
     description: Working directory
     required: false
     default: "."
