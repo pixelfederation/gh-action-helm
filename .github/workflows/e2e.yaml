@@ -18,7 +18,7 @@ jobs:
         run: |
           mkdir tests
           cd tests
-          echo 'helm 3.7.1' > .tool-versions
+          echo 'helm 3.7.2' > .tool-versions
           echo '' > example.yaml
 
       - name: setup helm
