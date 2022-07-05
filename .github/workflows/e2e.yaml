@@ -43,8 +43,8 @@ jobs:
           echo "current-context:" $(kubectl config current-context)
           kubectl config view --raw > ./tests/.kubeconfig
 
-      - name: Helm upgrade
-        id: helm-upgrade
+      - name: Helm upgrade nginx
+        id: helm-upgrade-nginx
         uses: pixelfederation/gh-action-helm/upgrade@main
         with:
           dir: tests
@@ -61,6 +61,20 @@ jobs:
           set: |
             buildLabels.foo | bar
 
+      - name: Helm upgrade foo
+        id: helm-upgrade-foo
+        uses: pixelfederation/gh-action-helm/upgrade@main
+        with:
+          dir: tests
+          namespace: default
+          release: foo-release
+          chart: nginx-stable/nginx-ingress
+          version: 0.13.2
+          wait: false
+          dryrun: false
+          atomic: false
+          kubeconfig: .kubeconfig
+
       - name: Print kubectl deploy
         run: |
           sleep 30
@@ -71,3 +85,15 @@ jobs:
         working-directory: tests
         run:
           helm -n default list
+
+      - name: Helm clenup
+        id: helm-cleanup
+        uses: pixelfederation/gh-action-helm/cleanup@main
+        with:
+          dir: tests
+          kubeconfig: .kubeconfig
+          namespace: default
+          regexp: "^(nginx).*"
+          excludes: |
+            .*bla.*
+            .*foo.*
