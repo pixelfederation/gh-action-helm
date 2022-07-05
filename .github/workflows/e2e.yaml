@@ -48,7 +48,7 @@ jobs:
         uses: pixelfederation/gh-action-helm/upgrade@main
         with:
           dir: tests
-          namespace: test
+          namespace: default
           release: nginx-deploy
           chart: nginx-stable/nginx-ingress
           version: 0.13.2

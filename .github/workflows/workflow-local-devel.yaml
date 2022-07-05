@@ -41,7 +41,7 @@ jobs:
         id: helm-upgrade
         uses: ./upgrade
         with:
-          namespace: test
+          namespace: default
           release: nginx-deploy
           chart: nginx-stable/nginx-ingress
           version: 0.13.2
