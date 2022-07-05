@@ -14,13 +14,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: create dirs
-        run: 
-          mkdir tests
-
-      - name: generete tools version
-        working-directory: tests
+      - name: generate tools version
         run: |
+          mkdir tests
+          cd tests
           echo 'helm 3.7.1' > .tool-versions
           echo '' > example.yaml
 
@@ -42,31 +39,31 @@ jobs:
           kubectl cluster-info
           kubectl get pods -n kube-system
           echo "current-context:" $(kubectl config current-context)
-          kubectl config view --raw
           kubectl config view --raw > ./tests/.kubeconfig
 
       - name: add helm repo
         working-directory: tests
         run: |
           helm repo add nginx-stable https://helm.nginx.com/stable
+          helm repo update nginx-stable
 
       - name: Helm upgrade
         id: helm-upgrade
         uses: pixelfederation/gh-action-helm/upgrade@main
         with:
-          dir: test
+          dir: tests
           namespace: test
           release: "nginx-deploy"
           chart: "nginx-stable/nginx-ingress"
           version: "0.13.2"
           wait: true
-          dryrun: true
+          dryrun: false
           atomic: true
           kubeconfig: .kubeconfig
           files: |
             example.yaml
           set: |
-            buildLabels.os | ${{ matrix.os }}
+            buildLabels.foo | bar
 
       - name: Print kubectl deploy
         run: |
