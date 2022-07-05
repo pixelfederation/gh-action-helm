@@ -83,7 +83,7 @@ jobs:
 
       - name: Print helm deploy
         working-directory: tests
-        run:
+        run: |
           helm -n default list
 
       - name: Helm clenup
@@ -100,7 +100,7 @@ jobs:
 
       - name: Print helm deploy after cleanup
         working-directory: tests
-        run:
+        run: |
           helm -n default list
           kubectl -n default get deploy
           kubectl -n default get pods
