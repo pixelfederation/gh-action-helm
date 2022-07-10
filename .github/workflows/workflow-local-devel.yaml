@@ -29,9 +29,9 @@ jobs:
         run: |
           which helm
           helm version
-          helm repo add nginx-stable https://helm.nginx.com/stable
-          helm search repo nginx-stable/nginx-ingress
+          helm repo add bitnami https://charts.bitnami.com/bitnami
           touch foobar.yaml buz.yaml
+          kubectl create ns nginx || true
 
       - name: Set variable
         run: echo '::set-output name=JUST_VARIABLE::myvar'
@@ -41,20 +41,58 @@ jobs:
         id: helm-upgrade
         uses: ./upgrade
         with:
-          namespace: default
-          release: nginx-deploy
-          chart: nginx-stable/nginx-ingress
-          version: 0.13.2
-          wait: false
-          dryrun: true
-          atomic: false
-          kubeconfig: /root/.kube/config
+          namespace: nginx
+          release: nginx
+          chart: bitnami/nginx
+          version: 13.1.0
+          wait: true
+          dryrun: false
+          atomic: true
+          timeout: 100
           set: |
-            controller.image.tag | tombo
-            controller.ingressClass | ${{ steps.justvar.outputs.JUST_VARIABLE }}
+            service.type | ClusterIP
+            commonLabels.testlabel | tombo
+            commonAnnotations.testAnnotation | ${{ steps.justvar.outputs.JUST_VARIABLE }}
+            replicaCount | 3
           files: |
             foobar.yaml
             buz.yaml
+
+      - name: Helm upgrade 2
+        id: helm-upgrade2
+        uses: ./upgrade
+        with:
+          namespace: nginx
+          release: foobar
+          chart: bitnami/nginx
+          version: 13.1.0
+          wait: true
+          dryrun: false
+          atomic: true
+          timeout: 100
+          set: |
+            service.type | ClusterIP
+            commonLabels.testlabel | tombo
+            commonAnnotations.testAnnotation | ${{ steps.justvar.outputs.JUST_VARIABLE }}
+            replicaCount | 3
+
+      - name: Helm upgrade 3
+        id: helm-upgrade3
+        uses: ./upgrade
+        with:
+          namespace: nginx
+          release: nginx-buz
+          chart: bitnami/nginx
+          version: 13.1.0
+          wait: true
+          dryrun: false
+          atomic: true
+          timeout: 100
+          set: |
+            service.type | ClusterIP
+            commonLabels.testlabel | tombo
+            commonAnnotations.testAnnotation | ${{ steps.justvar.outputs.JUST_VARIABLE }}
+            replicaCount | 3
 
   clean:
     strategy:
@@ -82,9 +120,7 @@ jobs:
         id: helm-cleanup
         uses: ./cleanup
         with:
-          kubeconfig: /root/.kube/config
-          namespace: echoheaders
-          regexp: "^(tombo|kombo).*"
+          namespace: nginx
+          regexp: "^(tombo|foobar|nginx).*"
           excludes: |
-            .*bla.*
-            .*foo.*
+            .*buz.*

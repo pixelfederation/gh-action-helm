@@ -1793,7 +1793,7 @@ var require_io = __commonJS((exports2) => {
   var path = require("path");
   var util_1 = require("util");
   var ioUtil = require_io_util();
-  var exec5 = util_1.promisify(childProcess.exec);
+  var exec3 = util_1.promisify(childProcess.exec);
   function cp(source, dest, options = {}) {
     return __awaiter(this, void 0, void 0, function* () {
       const {force, recursive} = readCopyOptions(options);
@@ -1847,9 +1847,9 @@ var require_io = __commonJS((exports2) => {
       if (ioUtil.IS_WINDOWS) {
         try {
           if (yield ioUtil.isDirectory(inputPath, true)) {
-            yield exec5(`rd /s /q "${inputPath}"`);
+            yield exec3(`rd /s /q "${inputPath}"`);
           } else {
-            yield exec5(`del /f /a "${inputPath}"`);
+            yield exec3(`del /f /a "${inputPath}"`);
           }
         } catch (err) {
           if (err.code !== "ENOENT")
@@ -1871,7 +1871,7 @@ var require_io = __commonJS((exports2) => {
           return;
         }
         if (isDir) {
-          yield exec5(`rm -rf "${inputPath}"`);
+          yield exec3(`rm -rf "${inputPath}"`);
         } else {
           yield ioUtil.unlink(inputPath);
         }
@@ -2486,7 +2486,7 @@ var require_exec = __commonJS((exports2) => {
   };
   Object.defineProperty(exports2, "__esModule", {value: true});
   var tr = __importStar(require_toolrunner());
-  function exec5(commandLine, args, options) {
+  function exec3(commandLine, args, options) {
     return __awaiter(this, void 0, void 0, function* () {
       const commandArgs = tr.argStringToArray(commandLine);
       if (commandArgs.length === 0) {
@@ -2498,7 +2498,7 @@ var require_exec = __commonJS((exports2) => {
       return runner.exec();
     });
   }
-  exports2.exec = exec5;
+  exports2.exec = exec3;
 });
 
 // src/upgrade/main.ts
@@ -2506,7 +2506,7 @@ var core3 = __toModule(require_core());
 
 // src/input-helper.ts
 var core = __toModule(require_core());
-var DEFAULT_KUBECONFIG_PATH = "~/.kube/config";
+var DEFAULT_KUBECONFIG_PATH = process.env.HOME + "/.kube/config";
 async function getCommonInputs() {
   const result = {};
   result.kubeconfig = core.getInput("kubeconfig", {required: false}) || DEFAULT_KUBECONFIG_PATH;
@@ -2535,7 +2535,7 @@ function getExecOpts(opt) {
 async function getHelmVersion() {
   const ci = await getCommonInputs();
   let version;
-  const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig}});
+  const opts = getExecOpts({cwd: ci.dir, env: {...process.env, KUBECONFIG: ci.kubeconfig}});
   try {
     await exec.exec("helm", ["version", "--client"], opts.options);
     version = Number(opts.out.data.match(/v([0-9])[.]/)[1]);
@@ -2547,10 +2547,14 @@ async function getHelmVersion() {
   }
   return version;
 }
+async function helm(helmArgs) {
+  const ci = await getCommonInputs();
+  const opts = getExecOpts({cwd: ci.dir, env: {...process.env, KUBECONFIG: ci.kubeconfig}});
+  return exec.exec("helm", helmArgs, opts.options);
+}
 
 // src/upgrade/index.ts
 var core2 = __toModule(require_core());
-var exec3 = __toModule(require_exec());
 async function helmUpgrade() {
   const ci = await getCommonInputs();
   let helmVersion = await getHelmVersion();
@@ -2563,7 +2567,6 @@ async function helmUpgrade() {
   const atomic = core2.getBooleanInput("atomic", {required: false});
   const wait = core2.getBooleanInput("wait", {required: false});
   const install = core2.getBooleanInput("install", {required: false});
-  const opts = getExecOpts({cwd: ci.dir, env: {KUBECONFIG: ci.kubeconfig, HOME: process.env.HOME}});
   const setString = set.map((item) => {
     return item.split("|").map((it) => {
       return it.trim();
@@ -2585,7 +2588,7 @@ async function helmUpgrade() {
     wait ? "--wait" : "",
     ci.dryrun ? "--dry-run" : ""
   ]).filter(Boolean);
-  await exec3.exec("helm", helmArgs, opts.options);
+  await helm(helmArgs);
 }
 
 // src/upgrade/main.ts

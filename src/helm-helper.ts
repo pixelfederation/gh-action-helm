@@ -24,7 +24,7 @@ export async function getHelmVersion(): Promise<number> {
     const ci: ICommonInputs = await getCommonInputs();
     let version: number;
 
-    const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig}});
+    const opts = getExecOpts({cwd: ci.dir, env: { ...process.env, 'KUBECONFIG': ci.kubeconfig }});
     try {
         await exec.exec("helm", ["version", "--client"], opts.options);
         version = Number(opts.out.data.match(/v([0-9])[.]/)[1]);
@@ -35,4 +35,17 @@ export async function getHelmVersion(): Promise<number> {
         throw new Error('Failed to parse helm version ' + version);
     }
     return version;
+}
+
+export async function helm(helmArgs: Array): Promise {
+  const ci: ICommonInputs = await getCommonInputs();
+  const opts = getExecOpts({cwd: ci.dir, env: { ...process.env, 'KUBECONFIG': ci.kubeconfig }});
+  return exec.exec("helm", helmArgs, opts.options);
+}
+
+export async function helmList(helmArgs: Array): Promise {
+  const ci: ICommonInputs = await getCommonInputs();
+  const opts = getExecOpts({cwd: ci.dir, env: { ...process.env, 'KUBECONFIG': ci.kubeconfig }});
+  await exec.exec("helm", ["list"].concat(helmArgs), opts.options);
+  return opts.out.data.split('\n').filter(Boolean);
 }

@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import {ICommonInputs} from "./ICommonInputs";
 
 
-const DEFAULT_KUBECONFIG_PATH = "~/.kube/config"
+const DEFAULT_KUBECONFIG_PATH = process.env.HOME + "/.kube/config";
 
 export async function getCommonInputs(): Promise<ICommonInputs> {
     const result = ({} as unknown) as ICommonInputs;

@@ -1,5 +1,5 @@
 import { getCommonInputs } from "../input-helper";
-import { getHelmVersion, getExecOpts } from "../helm-helper";
+import { getHelmVersion, helm } from "../helm-helper";
 import { ICommonInputs } from "../ICommonInputs";
 import * as core from "@actions/core";
 import * as exec from "@actions/exec";
@@ -19,7 +19,6 @@ export async function helmUpgrade(): Promise<void> {
   const atomic: boolean = core.getBooleanInput('atomic', { required: false });
   const wait: boolean = core.getBooleanInput('wait', { required: false });
   const install: boolean = core.getBooleanInput('install', { required: false });
-  const opts = getExecOpts({cwd: ci.dir, env: {'KUBECONFIG': ci.kubeconfig, 'HOME': process.env.HOME}});
 
   const setString: string = set.map(item=> { return item.split('|')
     .map(it=> { return it.trim() })
@@ -45,5 +44,5 @@ export async function helmUpgrade(): Promise<void> {
     ])
     .filter(Boolean);
 
-  await exec.exec("helm", helmArgs, opts.options);
+  await helm(helmArgs);
 }
