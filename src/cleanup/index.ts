@@ -18,9 +18,10 @@ export async function helmCleanup(): Promise<void> {
   let deploys: string[] = await helmList(helmListArgs);
 
   for(let exclude of excludes) {
-    const regExp = new RegExp(exclude);
+    const regExp = new RegExp(exclude.trim());
     deploys = deploys.filter(deploy => { return  !regExp.test(deploy) });
   }
+  console.log('EXCLUDES', excludes)
 
   const promises: Array<Promise> = [];
   let helmArgs: string[];
