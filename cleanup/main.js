@@ -2630,11 +2630,11 @@ async function helmCleanup() {
   let deploys = await helmList(helmListArgs);
   for (let exclude of excludes) {
     const regExp = new RegExp(exclude.trim());
+    console.log("EXCLUDE", regExp);
     deploys = deploys.filter((deploy) => {
       return !regExp.test(deploy);
     });
   }
-  console.log("EXCLUDES", excludes);
   const promises = [];
   let helmArgs;
   for (let deploy of deploys) {
