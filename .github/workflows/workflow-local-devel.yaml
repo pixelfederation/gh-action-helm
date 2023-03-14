@@ -23,7 +23,7 @@ jobs:
           echo '' > example.yaml
 
       - name: setup helm
-        uses: pixelfederation/gh-action-asdf/install@v2.0.0
+        uses: pixelfederation/gh-action-asdf/install@v2.1.0
 
       - name: check helm
         run: |
