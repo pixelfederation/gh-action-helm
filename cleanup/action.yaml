@@ -2,7 +2,7 @@ name: Helm cleanup
 description: Helm cleanup releses
 author: Tomas Hulata <thulata@pixelfederation.com>
 runs:
-  using: node12
+  using: node16
   main: main.js
 inputs:
   namespace:
