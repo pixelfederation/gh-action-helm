@@ -1,6 +1,6 @@
 {
   "name": "@helm/actions",
-  "version": "1.0.1",
+  "version": "0.1.0",
   "description": "helm pxfd actions",
   "repository": "https://github.com/asdf-vm/actions",
   "author": "Tomas Hulata <thulata@pixelfederation.com>",
