@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: generate tools version
         run: |
@@ -34,7 +34,7 @@ jobs:
           helm repo add nginx-stable https://helm.nginx.com/stable
           helm repo add bitnami https://charts.bitnami.com/bitnami
 
-      - uses: helm/kind-action@v1.7.0
+      - uses: helm/kind-action@v1.8.0
 
       - name: Check cluster
         run: |
