@@ -1,6 +1,6 @@
 # Changelog
 
-## [v0.2.0] - 2023-03-01
+## [v0.2.0] - 2024-03-01
 
 - Migration to node20
 - Dependencies version bump
